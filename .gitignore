@@ -1,0 +1,16 @@
+# NPM
+node_modules
+package-lock.json
+
+# CLI settings
+cli/settings.json
+cli/log-settings.json
+
+# CLI logs
+cli/logs
+
+# extension data
+cli/data
+
+# Visual Studio Code
+.vscode
