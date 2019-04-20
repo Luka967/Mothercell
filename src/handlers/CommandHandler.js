@@ -40,11 +40,20 @@ class CommandHandler extends Handler {
     }
 
     /**
+     * @param {DiscordJS.GuildMember} guildMember
+     */
+    canEditSettings(guildMember) {
+        const guildSettings = this.getGuildSettings(guildMember.guild);
+        return guildMember.hasPermission("MANAGE_GUILD", true, true, true) ||
+            guildMember.roles.filter(v => guildSettings.whitelistRoles.indexOf(v.id) !== -1).size > 0;
+    }
+
+    /**
      * @param {DiscordJS.Message} message
      */
     onMessage(message) {
         const guildSettings = this.getGuildSettings(message.guild);
-        const guildMember = message.guild.members.get(message.author.id);
+        const guildMember = message.guild.member(message.author);
 
         if (message.content === `<@${this.client.user.id}>` && guildSettings.prefix !== null) {
             this.clientManager.respond(message.channel, "greet", "my prefix is `$1`", guildSettings.prefix);
@@ -93,10 +102,14 @@ const settings = [
             return host.commandHandler.getGuildSettings(source.guild).prefix;
         },
         (host, source, value) => {
+            if (!host.commandHandler.canEditSettings(source.guild.member(source.author)))
+                return { success: false, message: Misc.NO_PERMISSION };
+
             if (typeof value !== "string")
                 return { success: false, message: Misc.SETTING_COMMANDS_PREFIX_STRING };
             if (value.length === 0)
                 return { success: false, message: Misc.SETTING_COMMANDS_PREFIX_STRLEN };
+
             host.commandHandler.getGuildSettings(source.guild).prefix = value;
             host.commandHandler.flushData();
             return { success: true };
@@ -107,15 +120,18 @@ const settings = [
             return host.commandHandler.getGuildSettings(source.guild).whitelistChannels;
         },
         (host, source, value) => {
-            if (!(value instanceof Array))
-                return { success: false, message: Misc.SETTING_COMMANDS_CHANNELS_ARRAY };
+            if (!host.commandHandler.canEditSettings(source.guild.member(source.author)))
+                return { success: false, message: Misc.NO_PERMISSION };
 
+                if (!(value instanceof Array))
+                return { success: false, message: Misc.SETTING_COMMANDS_CHANNELS_ARRAY };
             for (let channelID of value) {
                 if (typeof channelID !== "string")
                     return { success: false, message: Misc.SETTING_COMMANDS_CHANNELS_STRING };
                 if (!source.guild.channels.has(channelID))
                     return { success: false, message: Misc.format(Misc.SETTING_COMMANDS_CHANNELS_NOEX, channelID) };
             }
+
             host.commandHandler.getGuildSettings(source.guild).whitelistChannels = value;
             host.commandHandler.flushData();
             return { success: true };
@@ -126,9 +142,11 @@ const settings = [
             return host.commandHandler.getGuildSettings(source.guild).blacklistRoles;
         },
         (host, source, value) => {
+            if (!host.commandHandler.canEditSettings(source.guild.member(source.author)))
+                return { success: false, message: Misc.NO_PERMISSION };
+
             if (!(value instanceof Array))
                 return { success: false, message: Misc.SETTING_COMMANDS_BROLES_ARRAY };
-
             for (let roleID of value) {
                 if (typeof roleID !== "string")
                     return { success: false, message: Misc.SETTING_COMMANDS_BROLES_STRING };
@@ -145,9 +163,11 @@ const settings = [
             return host.commandHandler.getGuildSettings(source.guild).whitelistRoles;
         },
         (host, source, value) => {
+            if (!host.commandHandler.canEditSettings(source.guild.member(source.author)))
+                return { success: false, message: Misc.NO_PERMISSION };
+
             if (!(value instanceof Array))
                 return { success: false, message: Misc.SETTING_COMMANDS_WROLES_ARRAY };
-
             for (let roleID of value) {
                 if (typeof roleID !== "string")
                     return { success: false, message: Misc.SETTING_COMMANDS_WROLES_STRING };

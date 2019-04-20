@@ -1,2 +1,5 @@
+0.1.1 @ 2019-04-20
+- Added permission restriction for CommandHandler settings
+
 0.1.0 @ 2019-04-20
 Made open-source

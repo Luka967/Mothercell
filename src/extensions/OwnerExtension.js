@@ -25,7 +25,7 @@ class OwnerExtension extends Extension {
 const commands = [
     new Command(OwnerExtension, "eval", "<javascript>", "evaluate a script within Host", (host, args, message) => {
         if (message.author.id !== host.settings.hostOwner) {
-            host.clientManager.respond(message.channel, "fail", "insufficient permissions");
+            host.clientManager.respond(message.channel, "fail", Misc.NO_PERMISSION);
             return;
         }
         const startTime = process.hrtime();
@@ -49,10 +49,11 @@ const commands = [
     }),
     new Command(OwnerExtension, "say", "<message>", "make the bot say something", (host, args, message) => {
         if (message.author.id !== host.settings.hostOwner) {
-            host.clientManager.respond(message.channel, "fail", "insufficient permissions");
+            host.clientManager.respond(message.channel, "fail", Misc.NO_PERMISSION);
             return;
         }
         message.channel.send(args.join(" ")).catch(e => { });
+        message.delete().catch(e => { });
     }),
 ];
 

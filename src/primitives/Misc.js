@@ -57,6 +57,8 @@ module.exports = {
     ACTION_SEND_EMBED_GUILD: 3,
     ACTION_DELETE_MESSAGE_GUILD: 4,
 
+    NO_PERMISSION: "insufficient permissions",
+
     HCOMMANDS_CANNOT_USE: "cannot use commands here",
     HCOMMANDS_UNKNOWN: "unknown command `$1`",
 
