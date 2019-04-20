@@ -7,19 +7,11 @@ interface HCommandsSavedData {
     };
 }
 
-interface ELevelsCompiledUserData {
-    [userID: string]: {
-        timeout: number;
-        totalXP: number;
-        guildXP: {
-            [guildID: string]: number;
-        };
-    };
-}
 interface ELevelsSavedData {
-    users: {
+    userProgress: {
         [userID: string]: {
             timeout: number;
+            totalXP: number;
             guildXP: {
                 [guildID: string]: number;
             };

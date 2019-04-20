@@ -14,7 +14,7 @@ class MessageHandler extends Handler {
 
         /** @type {MessageCallback[]} */
         this.callbacks = [];
-        this.lastMessageTime = Date.now();
+        this.lastMessageTime = this.host.time;
     }
 
     static get id() { return "hmessages"; }
@@ -41,7 +41,7 @@ class MessageHandler extends Handler {
     onMessage(message) {
         if (message.author.bot) return;
         if (message.channel.type != "text") return;
-        this.lastMessageTime = Date.now();
+        this.lastMessageTime = this.host.time;
         for (let callback of this.callbacks)
             if (callback(message)) break;
     }

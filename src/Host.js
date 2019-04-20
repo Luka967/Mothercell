@@ -40,6 +40,8 @@ class Host {
         this.extensions = { };
     }
 
+    get time() { return Date.now(); }
+
     /**
      * @param {Settings} settings
      */
@@ -94,7 +96,7 @@ class Host {
      * @param {Function} callback
      */
     queueTask(offset, callback) {
-        return this.addTask(Date.now() + offset, callback);
+        return this.addTask(this.time + offset, callback);
     }
     /**
      * @param {number} timestamp
@@ -126,7 +128,7 @@ class Host {
     }
 
     tick() {
-        const time = Date.now();
+        const time = this.time;
         for (let i in this.tasks) {
             if (parseInt(i) > time) break;
             for (let callback of this.tasks[i])

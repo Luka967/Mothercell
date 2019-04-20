@@ -1,3 +1,6 @@
+0.2.0 @ 2019-04-21
+- Implemented levels
+
 0.1.1 @ 2019-04-20
 - Added permission restriction for CommandHandler settings
 

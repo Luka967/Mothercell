@@ -1,5 +1,4 @@
 const fs = require("fs");
-
 const Handler = require("../hooks/Handler");
 
 /**

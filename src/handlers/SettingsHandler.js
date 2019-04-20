@@ -53,7 +53,7 @@ const commands = [
         if (result.type === "get")
             host.clientManager.respond(message.channel, "info", "`$1`", JSON.stringify(result.result, null, true));
         else if (result.type === "set" && result.result.success)
-            host.clientManager.respond(message.channel, "info", "$1", result.result.message || "updated successfully");
+            host.clientManager.respond(message.channel, "ok", "$1", result.result.message || "updated successfully");
         else
             host.clientManager.respond(message.channel, "fail", "$1", result.result.message || "updating failed");
     })

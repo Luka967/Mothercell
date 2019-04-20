@@ -1,8 +1,8 @@
-const util      = require("util");
+const util = require("util");
 const DiscordJS = require("discord.js");
 const Extension = require("../hooks/Extension");
-const Misc      = require("../primitives/Misc");
-const Command   = require("../commands/Command");
+const Misc = require("../primitives/Misc");
+const Command = require("../commands/Command");
 
 class OwnerExtension extends Extension {
     /**
@@ -52,8 +52,10 @@ const commands = [
             host.clientManager.respond(message.channel, "fail", Misc.NO_PERMISSION);
             return;
         }
-        message.channel.send(args.join(" ")).catch(e => { });
-        message.delete().catch(e => { });
+        message.delete().then(
+            v => message.channel.send(args.join(" ")),
+            Misc.noop
+        ).catch(Misc.noop);
     }),
 ];
 

@@ -1,8 +1,8 @@
-const util      = require("util");
+const util = require("util");
 const DiscordJS = require("discord.js");
 const Extension = require("../hooks/Extension");
-const Misc      = require("../primitives/Misc");
-const Command   = require("../commands/Command");
+const Misc = require("../primitives/Misc");
+const Command = require("../commands/Command");
 
 class BasicExtension extends Extension {
     /**

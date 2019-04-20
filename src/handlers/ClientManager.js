@@ -16,11 +16,6 @@ function extractElements(item) {
 }
 
 /**
- * @param {DiscordJS.DiscordAPIError} e
- */
-const violentPromiseFail = e => { throw e; };
-
-/**
  * @type {{ [APIcode: number]: { [botAction: number]: string | 0 | -1 } }}
  */
 const codes = {
@@ -104,7 +99,7 @@ class ClientManager extends Handler {
             .catch(
                 e => this.handleError(e, source.channel, Misc.ACTION_SEND_MESSAGE_GUILD)
             )
-            .catch(violentPromiseFail);
+            .catch(Misc.throw);
     }
     /**
      * @param {DiscordJS.TextChannel} channel
@@ -119,7 +114,7 @@ class ClientManager extends Handler {
             .catch(
                 e => this.handleError(e, channel, Misc.ACTION_SEND_MESSAGE_GUILD)
             )
-            .catch(violentPromiseFail);
+            .catch(Misc.throw);
     }
     /**
      * @param {DiscordJS.TextChannel} channel
@@ -130,7 +125,7 @@ class ClientManager extends Handler {
             .catch(
                 e => this.handleError(e, channel, Misc.ACTION_SEND_EMBED_GUILD)
             )
-            .catch(violentPromiseFail);
+            .catch(Misc.throw);
     }
 
     onClientReady() {
@@ -141,7 +136,7 @@ class ClientManager extends Handler {
 
         this.client.once("disconnect", this.specialBound.disconnect);
         this.client.user.setPresence(this.settings.hostPresence)
-            .catch(violentPromiseFail);
+            .catch(Misc.throw);
     }
     onClientError(e) {
         throw e;
@@ -165,14 +160,14 @@ class ClientManager extends Handler {
 
         this.client.once("ready", this.specialBound.ready);
         this.client.login(this.settings.hostToken)
-            .catch(violentPromiseFail);
+            .catch(Misc.throw);
     }
     onStop() {
         for (let eventName in this.bound)
             this.client.off(eventName, this.bound[eventName]);
 
         this.client.destroy()
-            .catch(violentPromiseFail);
+            .catch(Misc.throw);
     }
 }
 

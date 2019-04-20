@@ -6,7 +6,7 @@ const DefaultSettings = require("../src/Settings");
 const DefaultExtensions = [
     //require("../src/extensions/AutomodExtension"),
     require("../src/extensions/BasicExtension"),
-    //require("../src/extensions/LevelExtension"),
+    require("../src/extensions/LevelExtension"),
     //require("../src/extensions/ModExtension"),
     require("../src/extensions/OwnerExtension"),
 ];

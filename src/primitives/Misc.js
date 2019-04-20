@@ -1,7 +1,13 @@
 const DiscordJS = require("discord.js");
 
 module.exports = {
-    version: "0.1.0",
+    version: "0.2.0",
+
+    noop() { },
+    /**
+     * @param {DiscordJS.DiscordAPIError} e
+     */
+    throw(e) { throw e; },
 
     /**
      * @param {DiscordJS.User} userAuthor
