@@ -65,15 +65,15 @@ class LevelExtension extends Extension {
             passXP,
             level = 0;
         while (true) {
-            passXP = 50 + Math.pow(50, level);
+            passXP = 50 + 50 * Math.pow(level, 1.2);
             if (remainderXP < passXP) break;
             remainderXP -= passXP;
             level++;
         }
         return {
-            XP: remainderXP,
+            XP: ~~remainderXP,
             totalXP: userProgress.totalXP,
-            passXP: passXP,
+            passXP: ~~passXP,
             level: level
         };
     }
@@ -134,7 +134,7 @@ class LevelExtension extends Extension {
 }
 
 const commands = [
-    new Command(LevelExtension, "xp", "[user]", "display your or somebody's XP", (host, args, message) => {
+    new Command(LevelExtension, "xp", "[user]", "display your or somebody's XP", async (host, args, message) => {
         /** @type {LevelExtension} */
         const extension = host.extensions[LevelExtension.id];
 
@@ -143,14 +143,15 @@ const commands = [
             host.clientManager.respond(message.channel, "fail", "`level` extension is disabled in this guild");
             return;
         }
+        /** @type {DiscordJS.User} */
         let user;
         if (args.length >= 1) {
-            user = args[0];
-            if (user[0] !== "<" || user[1] !== "@" || user[user.length - 1] !== ">") {
-                host.clientManager.respond(message.channel, "fail", "`$1` is not an user", user);
+            const mention = args[0];
+            if (mention[0] !== "<" || mention[1] !== "@" || mention[mention.length - 1] !== ">") {
+                host.clientManager.respond(message.channel, "fail", "`$1` is not an user", mention);
                 return;
             }
-            user = user.slice(1, user.length - 1);
+            user = await host.client.fetchUser(mention.slice(2, mention.length - 1));
         } else user = message.author;
         const guildMember = message.guild.member(message.author);
         if (guildMember == null) {

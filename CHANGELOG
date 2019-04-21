@@ -1,11 +1,16 @@
+0.2.2 @ 2019-04-21
+changelog: Format updated
+level: Fixed improper detection of the mentioned user
+level: Updated level scale
+
 0.2.1 @ 2019-04-21
-- Fixed a promise rejection from remnants of old code
+hcommand: Fixed a promise rejection from remnants of old code
 
 0.2.0 @ 2019-04-21
-- Implemented levels
+level: Implemented
 
 0.1.1 @ 2019-04-20
-- Added permission restriction for CommandHandler settings
+hcommand: Added permission restriction for CommandHandler settings
 
 0.1.0 @ 2019-04-20
 Made open-source
