@@ -93,7 +93,7 @@ class ClientManager extends Handler {
         const messageFormat = `${emoji} ${message} ${mention}`;
         return source.delete()
             .then(
-                v => this.send(source.channel, simpleMessageFormat, messageFormat, ...format),
+                v => this.send(source.channel, messageFormat, ...format),
                 e => this.handleError(e, source.channel, Misc.ACTION_DELETE_MESSAGE_GUILD)
             )
             .catch(

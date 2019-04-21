@@ -1,3 +1,6 @@
+0.2.1 @ 2019-04-21
+- Fixed a promise rejection from remnants of old code
+
 0.2.0 @ 2019-04-21
 - Implemented levels
 
