@@ -74,8 +74,10 @@ class CommandHandler extends Handler {
             guildMember.roles.filter(v => guildSettings.whitelistRoles.indexOf(v.id) !== -1).size > 0;
         const forbiddenHere =
             guildSettings.whitelistChannels.indexOf(message.channel.id) === -1;
-        if (!allowedAnywhere && forbiddenHere)
-            return this.clientManager.prevent(message, "fail", Misc.HCOMMANDS_CANNOT_USE), true;
+        if (!allowedAnywhere && forbiddenHere) {
+            this.clientManager.prevent(message, "fail", Misc.HCOMMANDS_CANNOT_USE);
+            return true;
+        }
 
         command = message.content.slice(hitPrefix.length).split(/\r\n|\r|\n/).join("").trim().split(" ");
         const name = command[0];

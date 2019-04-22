@@ -56,6 +56,8 @@ class ClientManager extends Handler {
         };
     }
 
+    static get id() { return "mclient"; }
+
     /**
      * @param {DiscordJS.DiscordAPIError} e
      * @param {DiscordJS.User | DiscordJS.Message | DiscordJS.TextChannel | DiscordJS.DMChannel | DiscordJS.Guild} item
@@ -69,7 +71,7 @@ class ClientManager extends Handler {
         if (codes[e.code][action] === 0) return;
         const elements = extractElements(item);
         const content = Misc.format(`${Misc.emotes.info} ${codes[e.code][action]}`, ...elements);
-        return elements[1].createDM()
+        elements[1].createDM()
             .then(v => v.send(content))
             .catch(ee => this.handleError(ee, elements[1], Misc.ACTION_SEND_DM));
     }
@@ -96,11 +98,15 @@ class ClientManager extends Handler {
                 v => this.send(source.channel, messageFormat, ...format),
                 e => this.handleError(e, source.channel, Misc.ACTION_DELETE_MESSAGE_GUILD)
             )
-            .catch(
+            .then(
+                v => v.delete(5000),
                 e => this.handleError(e, source.channel, Misc.ACTION_SEND_MESSAGE_GUILD)
             )
-            .catch(Misc.throw);
+            .catch(
+                e => Misc.throw(e)
+            );
     }
+
     /**
      * @param {DiscordJS.TextChannel} channel
      * @param {keyof Misc["emotes"]} emote

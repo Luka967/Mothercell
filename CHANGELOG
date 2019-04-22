@@ -1,3 +1,8 @@
+0.2.3 @ 2019-04-22
+hcommand: Minor refactor
+mclient: Now actually has an ID
+mclient: Prevent message is now removed
+
 0.2.2 @ 2019-04-21
 changelog: Format updated
 level: Fixed improper detection of the mentioned user
