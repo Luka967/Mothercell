@@ -151,7 +151,8 @@ const commands = [
                 host.clientManager.respond(message.channel, "fail", "`$1` is not an user", mention);
                 return;
             }
-            user = await host.client.fetchUser(mention.slice(2, mention.length - 1));
+            const viaNickname = mention[2] === "!";
+            user = await host.client.fetchUser(mention.slice(viaNickname ? 3 : 2, mention.length - 1));
         } else user = message.author;
         const guildMember = message.guild.member(message.author);
         if (guildMember == null) {

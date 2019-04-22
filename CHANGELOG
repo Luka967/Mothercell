@@ -1,3 +1,6 @@
+0.2.5 @ 2019-04-22
+level: Fixed unhandled promise when doing xp command on a user by nickname mention
+
 0.2.4 @ 2019-04-22
 level: Fixed crash when a guild member cannot be found from user
 
