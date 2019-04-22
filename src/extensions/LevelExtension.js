@@ -107,7 +107,7 @@ class LevelExtension extends Extension {
         const guildSettings = this.getGuildSettings(message.guild);
         const guildMember = message.guild.member(message.author);
 
-        if (!guildSettings.enabled)
+        if (guildMember == null || !guildSettings.enabled)
             return false;
         if (guildSettings.blacklistChannels.indexOf(message.channel) !== -1)
             return false;
