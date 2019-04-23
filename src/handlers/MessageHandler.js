@@ -76,7 +76,7 @@ class MessageHandler extends Handler {
         this.host.client.on("message", this.onMessageBind);
     }
     onStop() {
-        this.host.client.off("message", this.onMessageBind);
+        this.host.client.removeListener("message", this.onMessageBind);
     }
 }
 

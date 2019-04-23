@@ -184,7 +184,7 @@ class ClientManager extends Handler {
     }
     onStop() {
         for (let eventName in this.bound)
-            this.client.off(eventName, this.bound[eventName]);
+            this.client.removeListener(eventName, this.bound[eventName]);
 
         this.client.destroy()
             .catch(Misc.throw);
