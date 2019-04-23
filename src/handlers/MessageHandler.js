@@ -1,7 +1,8 @@
 const Handler = require("../hooks/Handler");
 
 /**
- * @typedef {(message: DiscordJS.Message) => boolean} MessageCallback
+ * @typedef {(message: DiscordJS.Message) => boolean} ChainedMessageCallback
+ * @typedef {(message: DiscordJS.Message) => void} PureMessageCallback
  */
 
 class MessageHandler extends Handler {
@@ -12,26 +13,49 @@ class MessageHandler extends Handler {
         super(host);
         this.onMessageBind = this.onMessage.bind(this);
 
+        /** @type {ChainedMessageCallback[]} */
+        this.chained = [];
         /** @type {MessageCallback[]} */
-        this.callbacks = [];
-        this.lastMessageTime = this.host.time;
+        this.pure = [];
+        this.lastMessageTime = this.host.preciseTime;
     }
 
     static get id() { return "hmessages"; }
 
     /**
-     * @param {MessageCallback[]} callbacks
+     * @param {ChainedMessageCallback[]} callbacks
      */
-    add(...callbacks) {
-        this.callbacks.push(...callbacks);
+    appendChained(...callbacks) {
+        this.chained.unshift(...callbacks);
     }
     /**
-     * @param {MessageCallback[]} callbacks
+     * @param {ChainedMessageCallback[]} callbacks
      */
-    remove(...callbacks) {
+    addChained(...callbacks) {
+        this.chained.push(...callbacks);
+    }
+    /**
+     * @param {PureMessageCallback[]} callbacks
+     */
+    addPure(...callbacks) {
+        this.pure.push(...callbacks);
+    }
+    /**
+     * @param {ChainedMessageCallback[]} callbacks
+     */
+    removeChained(...callbacks) {
         for (let callback of callbacks) {
-            const index = this.callbacks.indexOf(callback);
-            if (index !== -1) this.callbacks.splice(index, 1);
+            const index = this.chained.indexOf(callback);
+            if (index !== -1) this.chained.splice(index, 1);
+        }
+    }
+    /**
+     * @param {PureMessageCallback[]} callbacks
+     */
+    removePure(...callbacks) {
+        for (let callback of callbacks) {
+            const index = this.pure.indexOf(callback);
+            if (index !== -1) this.pure.splice(index, 1);
         }
     }
 
@@ -41,8 +65,10 @@ class MessageHandler extends Handler {
     onMessage(message) {
         if (message.author.bot) return;
         if (message.channel.type != "text") return;
-        this.lastMessageTime = this.host.time;
-        for (let callback of this.callbacks)
+        this.lastMessageTime = this.host.preciseTime;
+        for (let callback of this.pure)
+            callback(message);
+        for (let callback of this.chained)
             if (callback(message)) break;
     }
 

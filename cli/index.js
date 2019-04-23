@@ -4,6 +4,7 @@ const readline = require("readline");
 
 const DefaultSettings = require("../src/Settings");
 const DefaultExtensions = [
+    require("../src/extensions/AutoExtension"),
     //require("../src/extensions/AutomodExtension"),
     require("../src/extensions/BasicExtension"),
     require("../src/extensions/LevelExtension"),

@@ -28,7 +28,7 @@ const commands = [
             host.clientManager.respond(message.channel, "fail", Misc.NO_PERMISSION);
             return;
         }
-        const startTime = process.hrtime();
+        let time = host.preciseTime;
 
         let threw = false, resultType;
         const result = (function() {
@@ -36,8 +36,7 @@ const commands = [
             catch (e) { threw = true; resultType = typeof e; return e instanceof Error ? e.stack : e; }
         }).bind(host)();
 
-        let time = process.hrtime(startTime);
-        time = time[0] * 1e3 + time[1] / 1e6;
+        time = host.preciseTime - time;
 
         const resultInspected = threw ? result : util.inspect(result, true, 0, false);
         host.clientManager.respond(

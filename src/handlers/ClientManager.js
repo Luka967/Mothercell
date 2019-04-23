@@ -81,8 +81,24 @@ class ClientManager extends Handler {
      * @param {any[]} format
      */
     send(channel, message, ...format) {
-        return channel.send(Misc.format(message, ...format));
+        return channel.send(Misc.format(message, ...format))
+            .catch(
+                e => this.handleError(e, channel, Misc.ACTION_SEND_MESSAGE_GUILD)
+            )
+            .catch(Misc.throw);
     }
+    /**
+     * @param {DiscordJS.TextChannel | DiscordJS.DMChannel | DiscordJS.GroupDMChannel} channel
+     * @param {DiscordJS.Attachment | DiscordJS.RichEmbed} embed
+     */
+    sendEmbed(channel, embed) {
+        return channel.send(embed)
+            .catch(
+                e => this.handleError(e, channel, Misc.ACTION_SEND_EMBED_GUILD)
+            )
+            .catch(Misc.throw);
+    }
+
     /**
      * @param {DiscordJS.Message} source
      * @param {keyof Misc["emotes"]} emote
@@ -95,16 +111,14 @@ class ClientManager extends Handler {
         const messageFormat = `${emoji} ${message} ${mention}`;
         return source.delete()
             .then(
-                v => this.send(source.channel, messageFormat, ...format),
+                v => source.channel.send(Misc.format(messageFormat, ...format)),
                 e => this.handleError(e, source.channel, Misc.ACTION_DELETE_MESSAGE_GUILD)
             )
             .then(
                 v => v.delete(5000),
                 e => this.handleError(e, source.channel, Misc.ACTION_SEND_MESSAGE_GUILD)
             )
-            .catch(
-                e => Misc.throw(e)
-            );
+            .catch(Misc.throw);
     }
 
     /**
@@ -116,7 +130,7 @@ class ClientManager extends Handler {
     respond(channel, emote, message, ...format) {
         const emoji = Misc.emotes[emote];
         const messageFormat = `${emoji} ${message}`;
-        return this.send(channel, messageFormat, ...format)
+        return channel.send(Misc.format(messageFormat, ...format))
             .catch(
                 e => this.handleError(e, channel, Misc.ACTION_SEND_MESSAGE_GUILD)
             )

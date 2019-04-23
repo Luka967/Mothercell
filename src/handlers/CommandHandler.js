@@ -89,11 +89,11 @@ class CommandHandler extends Handler {
     }
 
     onStart() {
-        this.host.messageHandler.add(this.onMessageBind);
+        this.host.messageHandler.addChained(this.onMessageBind);
         this.host.settingsHandler.settingList.add(...settings);
     }
     onStop() {
-        this.host.messageHandler.remove(this.onMessageBind);
+        this.host.messageHandler.removeChained(this.onMessageBind);
         this.host.settingsHandler.settingList.remove(...settings);
     }
 }

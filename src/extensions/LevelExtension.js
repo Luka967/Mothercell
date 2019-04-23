@@ -124,11 +124,11 @@ class LevelExtension extends Extension {
     }
 
     onStart() {
-        this.host.messageHandler.add(this.onMessageBind);
+        this.host.messageHandler.addChained(this.onMessageBind);
         this.host.commandHandler.commandList.add(...commands);
     }
     onStop() {
-        this.host.messageHandler.add(this.onMessageBind);
+        this.host.messageHandler.addChained(this.onMessageBind);
         this.host.commandHandler.commandList.remove(...commands);
     }
 }

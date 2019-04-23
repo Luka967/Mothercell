@@ -41,6 +41,10 @@ class Host {
     }
 
     get time() { return Date.now(); }
+    get preciseTime() {
+        const v = process.hrtime();
+        return v[0] * 1e4 + v[1] / 1e6;
+    }
 
     /**
      * @param {Settings} settings
