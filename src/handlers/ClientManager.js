@@ -165,7 +165,8 @@ class ClientManager extends Handler {
         this.host.ready = false;
         this.host.ticker.stop();
         this.logger.debug("ticker stop");
-        if (!this.host.running) return;
+        if (!this.host.running)
+            return this.logger.inform("disconnected");
         this.client.once("reconnecting", this.specialBound.reconnecting);
         this.logger.warn("disconnected");
     }

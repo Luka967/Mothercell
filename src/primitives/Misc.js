@@ -10,26 +10,26 @@ module.exports = {
     throw(e) { throw e; },
 
     /**
-     * @param {DiscordJS.User} userAuthor
-     * @param {DiscordJS.User} userFooter
+     * @param {DiscordJS.User | DiscordJS.Guild} author
+     * @param {DiscordJS.User} footer
      * @param {string} title
      * @param {string} description
      * @param {{ name: string; value: string; inline?: boolean; }[]} fields
      * @param {number} color
      */
-    embed(userAuthor = null, userFooter = null, title = "", description = "", fields = [], color = 13525859) {
+    embed(author = null, footer = null, title = "", description = "", fields = [], color = 13525859) {
         const data = {
             title,
             description,
             color,
             fields,
-            author: userAuthor ? {
-                icon_url: userAuthor.displayAvatarURL,
-                name: userAuthor.username
+            author: author ? {
+                icon_url: author instanceof DiscordJS.User ? author.displayAvatarURL : author.iconURL,
+                name: author instanceof DiscordJS.User ? `${author.username}#${author.discriminator}` : author.name
             } : null,
-            footer: userFooter ? {
-                icon_url: userFooter.displayAvatarURL,
-                text: `${userFooter.username}#${userFooter.discriminator}`
+            footer: footer ? {
+                icon_url: footer.displayAvatarURL,
+                text: `${footer.username}#${footer.discriminator}`
             } : null,
             timestamp: new Date().toISOString()
         };

@@ -40,14 +40,14 @@ class LevelExtension extends Extension {
     }
 
     /**
-     * @param {DiscordJS.User} user
+     * @param {string} userID
      */
-    getUserProgress(user) {
+    getUserProgress(userID) {
         let value;
-        if (user.id in this.data.userProgress)
-            value = this.data.userProgress[user.id];
+        if (userID in this.data.userProgress)
+            value = this.data.userProgress[userID];
         else {
-            value = this.data.userProgress[user.id] = {
+            value = this.data.userProgress[userID] = {
                 timeout: 0,
                 totalXP: 0,
                 guildXP: { }
@@ -57,13 +57,15 @@ class LevelExtension extends Extension {
         return value;
     }
     /**
-     * @param {DiscordJS.User} user
+     * @param {string} userID
+     * @param {DiscordJS.Guild=} guild
      */
-    getUserLevel(user) {
-        const userProgress = this.getUserProgress(user);
-        let remainderXP = userProgress.totalXP,
+    getUserLevel(userID, guild) {
+        const userProgress = this.getUserProgress(userID);
+        let remainderXP = guild ? userProgress.guildXP[guild.id] : userProgress.totalXP,
             passXP,
             level = 0;
+        if (isNaN(remainderXP)) return null;
         while (true) {
             passXP = 50 + 50 * Math.pow(level, 1.2);
             if (remainderXP < passXP) break;
@@ -82,7 +84,7 @@ class LevelExtension extends Extension {
      * @param {string} messageContent
      */
     awardUser(guildMember, messageContent) {
-        const userProgress = this.getUserProgress(guildMember.user);
+        const userProgress = this.getUserProgress(guildMember.user.id);
         userProgress.timeout = this.host.time + 1 * 1000;
         const XP = ~~(1 + Math.min(messageContent.length, 100) / 100 * 4);
         userProgress.totalXP += XP;
@@ -115,7 +117,7 @@ class LevelExtension extends Extension {
             if (guildMember.roles.has(role))
                 return false;
 
-        const progress = this.getUserProgress(message.author);
+        const progress = this.getUserProgress(message.author.id);
         if (progress.timeout >= this.host.time)
             return false;
 
@@ -160,7 +162,11 @@ const commands = [
             return;
         }
 
-        const userProgress = extension.getUserLevel(user);
+        const userProgress = extension.getUserLevel(user.id, message.guild);
+        if (userProgress === null) {
+            host.clientManager.respond(message.channel, "fail", "user has no XP in this guild");
+            return;
+        }
         host.clientManager.respondEmbed(message.channel, Misc.embed(user, host.client.user, null, null, [
             {
                 name: "Level",
@@ -177,7 +183,41 @@ const commands = [
                 value: userProgress.totalXP,
                 inline: true
             }
-        ]))
+        ]));
+    }),
+    new Command(LevelExtension, "xpboard", "", "display the top 10 users for this guild", async (host, args, message) => {
+        /** @type {LevelExtension} */
+        const extension = host.extensions[LevelExtension.id];
+        const guild = message.guild;
+        /** @type {{ handle: string, level: number, XP: number, passXP: number, totalXP: number }[]} */
+        const users = [];
+        for (let userID in extension.data.userProgress) {
+            const userLevel = extension.getUserLevel(userID, guild);
+            if (userLevel === null) continue;
+            const user = await host.client.fetchUser(userID);
+            if (user == null) continue;
+            let index = 0;
+            for (; index < users.length && users[index].totalXP > userLevel.totalXP; index++) ;
+            users.splice(index, 0, {
+                handle: `${user.username}#${user.discriminator}`,
+                level: userLevel.level,
+                XP: userLevel.XP,
+                passXP: userLevel.passXP,
+                totalXP: userLevel.totalXP,
+            });
+            if (users.length >= 10) break;
+        }
+        const fields = [];
+        for (let i = 0; i < users.length; i++) {
+            const user = users[i];
+            fields.push({
+                name: Misc.format("**$1.** $2", 1 + i, user.handle),
+                value: Misc.format(`Level **$1** ($2 / $3 XP, **$4** total)`, user.level, user.XP, user.passXP, user.totalXP),
+                inline: false
+            });
+        }
+        const title = Misc.format("**$1** XP board", guild.name);
+        host.clientManager.respondEmbed(message.channel, Misc.embed(guild, host.client.user, title, null, fields));
     })
 ];
 
