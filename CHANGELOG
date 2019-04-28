@@ -1,10 +1,14 @@
+0.3.3 @ 2019-04-28
+*: Populate package.json
+level: Fomatting update for xpboard
+level: Fix improper user sorting for xpboard
+
 0.3.2 @ 2019-04-27
 *: Misc.embed can now take Guild as author field
 mclient: Inform of client disconnecting when stopping
 level: LevelExtension.getUserLevel and LevelExtension.getUserProgress now require user IDs instead of user objects
 level: LevelExtension.getUserProgress can now be limited by guild
 level: New command, xpboard
-
 
 0.3.1 @ 2019-04-23
 *: Use EventEmitter.removeListener instead of EventEmitter.off

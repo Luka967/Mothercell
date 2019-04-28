@@ -196,19 +196,17 @@ const commands = [
             if (userLevel === null) continue;
             const user = await host.client.fetchUser(userID);
             if (user == null) continue;
-            let index = 0;
-            for (; index < users.length && users[index].totalXP > userLevel.totalXP; index++) ;
-            users.splice(index, 0, {
+            users.push({
                 handle: `${user.username}#${user.discriminator}`,
                 level: userLevel.level,
                 XP: userLevel.XP,
                 passXP: userLevel.passXP,
                 totalXP: userLevel.totalXP,
             });
-            if (users.length >= 10) break;
         }
+        users.sort((a, b) => b.totalXP - a.totalXP);
         const fields = [];
-        for (let i = 0; i < users.length; i++) {
+        for (let i = 0; i < 10 && i < users.length; i++) {
             const user = users[i];
             fields.push({
                 name: Misc.format("**$1.** $2", 1 + i, user.handle),
@@ -216,8 +214,7 @@ const commands = [
                 inline: false
             });
         }
-        const title = Misc.format("**$1** XP board", guild.name);
-        host.clientManager.respondEmbed(message.channel, Misc.embed(guild, host.client.user, title, null, fields));
+        host.clientManager.respondEmbed(message.channel, Misc.embed(guild, host.client.user, null, null, fields));
     })
 ];
 
