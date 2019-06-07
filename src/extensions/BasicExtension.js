@@ -50,7 +50,44 @@ const commands = [
                 trip = host.preciseTime - execute;
                 v && v.edit(Misc.format(content, gateway, delay, trip))
             });
-    })
+    }),
+    new Command(BasicExtension, "status", "", "display bot status", async (host, args, message) => {
+        const memory = Misc.prettyMemoryData(process.memoryUsage());
+
+        const embed = Misc.embed(host.client.user, message.author, null, null, [
+            {
+                name: "Version",
+                value: Misc.version,
+                inline: true
+            },
+            {
+                name: "Owner",
+                value: host.settings.hostOwner != null ? `<@${host.settings.hostOwner}>` : "nobody",
+                inline: true
+            },
+            {
+                name: "Uptime",
+                value: Misc.prettyTime((host.time - host.runTime) / 1000),
+                inline: true
+            },
+            {
+                name: "Guilds",
+                value: host.clientManager.client.guilds.size,
+                inline: true
+            },
+            {
+                name: "Users",
+                value: host.clientManager.client.users.size,
+                inline: true
+            },
+            {
+                name: "Memory",
+                value: Misc.format("$1", memory.rss),
+                inline: true
+            }
+        ]);
+        host.clientManager.respondEmbed(message.channel, embed);
+    }),
 ];
 
 module.exports = BasicExtension;

@@ -16,6 +16,7 @@ class Host {
      * @param {ExtensionData} data
      */
     constructor(settings) {
+        this.runTime = NaN;
         this.running = false;
         this.ready = false;
         this.logger = new Logger();
@@ -59,6 +60,7 @@ class Host {
         if (this.running)
             throw new Error("already running");
         this.running = true;
+        this.runTime = this.time;
         this.logger.inform("starting");
 
         this.client = new DiscordJS.Client();
@@ -75,6 +77,7 @@ class Host {
         if (!this.running)
             throw new Error("not running");
         this.running = false;
+        this.runTime = NaN;
         this.logger.inform("stopping");
 
         this.clientManager.onStop();

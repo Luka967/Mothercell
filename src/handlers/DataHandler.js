@@ -41,12 +41,19 @@ class Entity {
         const self = this;
         if (self.running) return self.dirty++, false;
         self.running = true;
+        fs.writeFileSync(self.path, this.encode(self.data));
+        self.running = false;
+        self.dirty = 0;
+        /*
+        Asynchronous write to file
+        Hot patched to prevent data from being lost
         fs.writeFile(self.path, this.encode(self.data), () => {
             self.running = false;
             if (!self.dirty) return;
             self.dirty = 0;
             self.flush();
         });
+        */
         return true;
     }
 }

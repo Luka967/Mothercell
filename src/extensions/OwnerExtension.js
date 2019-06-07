@@ -56,6 +56,18 @@ const commands = [
             Misc.noop
         ).catch(Misc.noop);
     }),
+    new Command(OwnerExtension, "restart", "", "restart the bot shallowly", (host, args, message) => {
+        host.clientManager.respond(message.channel, "ok", "restarting...").then(myMessage => {
+            host.stop();
+            host.start();
+        });
+    }),
+    new Command(OwnerExtension, "stop", "", "stop the bot", (host, args, message) => {
+        host.clientManager.respond(message.channel, "ok", "I hope it's for a good reason").then(() => {
+            host.stop();
+            setTimeout(() => process.exit(0), 1000);
+        });
+    })
 ];
 
 module.exports = OwnerExtension;

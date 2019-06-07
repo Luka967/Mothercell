@@ -48,6 +48,15 @@ const commands = [
         }
         if (!result.found) {
             host.clientManager.respond(message.channel, "fail", Misc.HSETTINGS_UNKNOWN, settingName);
+            let possibleMatches = host.settingsHandler.settingList.search(settingName);
+            if (possibleMatches.length > 3) {
+                const matchCountOther = possibleMatches.length - 3;
+                possibleMatches = possibleMatches.slice(0, 3);
+                host.clientManager.respond(message.channel, "info", Misc.HSETTINGS_SUGGESTION_MANY, ...possibleMatches, matchCountOther);
+            } else if (possibleMatches.length > 0) {
+                const constantName = `HSETTINGS_SUGGESTION_${possibleMatches.length}`;
+                host.clientManager.respond(message.channel, "info", Misc[constantName], ...possibleMatches);
+            }
             return;
         }
         if (result.type === "get")

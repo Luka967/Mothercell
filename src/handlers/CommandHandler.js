@@ -108,9 +108,9 @@ const settings = [
                 return { success: false, message: Misc.NO_PERMISSION };
 
             if (typeof value !== "string")
-                return { success: false, message: Misc.SETTING_COMMANDS_PREFIX_STRING };
+                return { success: false, message: Misc.VALUE_MUST_BE_STRING };
             if (value.length === 0)
-                return { success: false, message: Misc.SETTING_COMMANDS_PREFIX_STRLEN };
+                return { success: false, message: Misc.VALUE_MUST_BE_NONEMPTY_STRING };
 
             host.commandHandler.getGuildSettings(source.guild).prefix = value;
             host.commandHandler.flushData();
@@ -125,13 +125,13 @@ const settings = [
             if (!host.commandHandler.canEditSettings(source.guild.member(source.author)))
                 return { success: false, message: Misc.NO_PERMISSION };
 
-                if (!(value instanceof Array))
-                return { success: false, message: Misc.SETTING_COMMANDS_CHANNELS_ARRAY };
+            if (!(value instanceof Array))
+                return { success: false, message: Misc.VALUE_MUST_BE_ARRAY };
             for (let channelID of value) {
                 if (typeof channelID !== "string")
-                    return { success: false, message: Misc.SETTING_COMMANDS_CHANNELS_STRING };
+                    return { success: false, message: Misc.VALUE_MUST_BE_STRINGS };
                 if (!source.guild.channels.has(channelID))
-                    return { success: false, message: Misc.format(Misc.SETTING_COMMANDS_CHANNELS_NOEX, channelID) };
+                    return { success: false, message: Misc.format(Misc.VALUE_CHANNEL_NOEX, channelID) };
             }
 
             host.commandHandler.getGuildSettings(source.guild).whitelistChannels = value;
@@ -148,12 +148,12 @@ const settings = [
                 return { success: false, message: Misc.NO_PERMISSION };
 
             if (!(value instanceof Array))
-                return { success: false, message: Misc.SETTING_COMMANDS_BROLES_ARRAY };
+                return { success: false, message: Misc.VALUE_MUST_BE_ARRAY };
             for (let roleID of value) {
                 if (typeof roleID !== "string")
-                    return { success: false, message: Misc.SETTING_COMMANDS_BROLES_STRING };
+                    return { success: false, message: Misc.VALUE_MUST_BE_STRINGS };
                 if (!source.guild.roles.has(roleID))
-                    return { success: false, message: Misc.format(Misc.SETTING_COMMANDS_BROLES_NOEX, roleID) };
+                    return { success: false, message: Misc.format(Misc.VALUE_ROLE_NOEX, roleID) };
             }
             host.commandHandler.getGuildSettings(source.guild).blacklistRoles = value;
             host.commandHandler.flushData();
@@ -169,12 +169,12 @@ const settings = [
                 return { success: false, message: Misc.NO_PERMISSION };
 
             if (!(value instanceof Array))
-                return { success: false, message: Misc.SETTING_COMMANDS_WROLES_ARRAY };
+                return { success: false, message: Misc.VALUE_MUST_BE_ARRAY };
             for (let roleID of value) {
                 if (typeof roleID !== "string")
-                    return { success: false, message: Misc.SETTING_COMMANDS_WROLES_STRING };
+                    return { success: false, message: Misc.VALUE_MUST_BE_STRINGS };
                 if (!source.guild.roles.has(roleID))
-                    return { success: false, message: Misc.format(Misc.SETTING_COMMANDS_WROLES_NOEX, roleID) };
+                    return { success: false, message: Misc.format(Misc.VALUE_ROLE_NOEX, roleID) };
             }
             host.commandHandler.getGuildSettings(source.guild).whitelistRoles = value;
             host.commandHandler.flushData();

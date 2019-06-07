@@ -41,9 +41,9 @@ class ModExtension extends Extension {
      * @param {DiscordJS.GuildMember} guildMember
      */
     canEditSettings(guildMember) {
-        const guildSettings = this.getGuildInfo(guildMember.guild);
+        const commandGuildSettings = this.host.commandHandler.getGuildSettings(guildMember.guild);
         return guildMember.hasPermission("MANAGE_GUILD", true, true, true) ||
-            guildMember.roles.filter(v => guildSettings.whitelistRoles.indexOf(v.id) !== -1).size > 0;
+            guildMember.roles.filter(v => commandGuildSettings.whitelistRoles.indexOf(v.id) !== -1).size > 0;
     }
 
     /**

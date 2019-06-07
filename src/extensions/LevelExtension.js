@@ -73,9 +73,9 @@ class LevelExtension extends Extension {
             level++;
         }
         return {
-            XP: ~~remainderXP,
+            XP: Math.floor(remainderXP),
             totalXP: userProgress.totalXP,
-            passXP: ~~passXP,
+            passXP: Math.floor(passXP),
             level: level
         };
     }
@@ -97,9 +97,9 @@ class LevelExtension extends Extension {
      * @param {DiscordJS.GuildMember} guildMember
      */
     canEditSettings(guildMember) {
-        const guildSettings = this.getGuildSettings(guildMember.guild);
+        const commandGuildSettings = this.host.commandHandler.getGuildSettings(guildMember.guild);
         return guildMember.hasPermission("MANAGE_GUILD", true, true, true) ||
-            guildMember.roles.filter(v => guildSettings.whitelistRoles.indexOf(v.id) !== -1).size > 0;
+            guildMember.roles.filter(v => commandGuildSettings.whitelistRoles.indexOf(v.id) !== -1).size > 0;
     }
 
     /**
@@ -128,10 +128,12 @@ class LevelExtension extends Extension {
     onStart() {
         this.host.messageHandler.addChained(this.onMessageBind);
         this.host.commandHandler.commandList.add(...commands);
+        this.host.settingsHandler.settingList.add(...settings);
     }
     onStop() {
         this.host.messageHandler.addChained(this.onMessageBind);
         this.host.commandHandler.commandList.remove(...commands);
+        this.host.settingsHandler.settingList.remove(...settings);
     }
 }
 
@@ -189,15 +191,13 @@ const commands = [
         /** @type {LevelExtension} */
         const extension = host.extensions[LevelExtension.id];
         const guild = message.guild;
-        /** @type {{ handle: string, level: number, XP: number, passXP: number, totalXP: number }[]} */
+        /** @type {{ id: string, level: number, XP: number, passXP: number, totalXP: number }[]} */
         const users = [];
         for (let userID in extension.data.userProgress) {
             const userLevel = extension.getUserLevel(userID, guild);
             if (userLevel === null) continue;
-            const user = await host.client.fetchUser(userID);
-            if (user == null) continue;
             users.push({
-                handle: `${user.username}#${user.discriminator}`,
+                id: userID,
                 level: userLevel.level,
                 XP: userLevel.XP,
                 passXP: userLevel.passXP,
@@ -208,8 +208,10 @@ const commands = [
         const fields = [];
         for (let i = 0; i < 10 && i < users.length; i++) {
             const user = users[i];
+            const userFetched = await host.client.fetchUser(user.id);
+            const userHandle = userFetched != null ? (`${userFetched.username}#${userFetched.discriminator}`) : user.id;
             fields.push({
-                name: Misc.format("**$1.** $2", 1 + i, user.handle),
+                name: Misc.format("**$1.** $2", 1 + i, userHandle),
                 value: Misc.format(`Level **$1** ($2 / $3 XP, **$4** total)`, user.level, user.XP, user.passXP, user.totalXP),
                 inline: false
             });
@@ -219,7 +221,76 @@ const commands = [
 ];
 
 const settings = [
+    new Setting(LevelExtension, "levels.enabled", false,
+        (host, source) => {
+            /** @type {LevelExtension} */
+            const extension = host.extensions["level"];
+            return extension.getGuildSettings(source.guild).enabled;
+        },
+        (host, source, value) => {
+            /** @type {LevelExtension} */
+            const extension = host.extensions["level"];
+            if (!extension.canEditSettings(source.guild.member(source.author)))
+                return { success: false, message: Misc.NO_PERMISSION };
 
+            if (typeof value !== "boolean")
+                return { success: false, message: Misc.VALUE_MUST_BE_BOOL };
+
+            extension.getGuildSettings(source.guild).enabled = value;
+            extension.flushData();
+            return { success: true };
+        }
+    ),
+    new Setting(LevelExtension, "levels.blacklistroles", true,
+        (host, source) => {
+            /** @type {LevelExtension} */
+            const extension = host.extensions["level"];
+            return extension.getGuildSettings(source.guild).blacklistRoles;
+        },
+        (host, source, value) => {
+            /** @type {LevelExtension} */
+            const extension = host.extensions["level"];
+            if (!extension.canEditSettings(source.guild.member(source.author)))
+                return { success: false, message: Misc.NO_PERMISSION };
+
+            if (!(value instanceof Array))
+                return { success: false, message: Misc.VALUE_MUST_BE_ARRAY };
+            for (let roleID of value) {
+                if (typeof roleID !== "string")
+                    return { success: false, message: Misc.VALUE_MUST_BE_STRINGS };
+                if (!source.guild.roles.has(roleID))
+                    return { success: false, message: Misc.format(Misc.VALUE_ROLE_NOEX, roleID) };
+            }
+            extension.getGuildSettings(source.guild).blacklistRoles = value;
+            extension.flushData();
+            return { success: true };
+        }
+    ),
+    new Setting(LevelExtension, "levels.blacklistchannels", true,
+        (host, source) => {
+            /** @type {LevelExtension} */
+            const extension = host.extensions["level"];
+            return extension.getGuildSettings(source.guild).blacklistChannels;
+        },
+        (host, source, value) => {
+            /** @type {LevelExtension} */
+            const extension = host.extensions["level"];
+            if (!extension.canEditSettings(source.guild.member(source.author)))
+                return { success: false, message: Misc.NO_PERMISSION };
+
+            if (!(value instanceof Array))
+                return { success: false, message: Misc.VALUE_MUST_BE_ARRAY };
+            for (let channelID of value) {
+                if (typeof channelID !== "string")
+                    return { success: false, message: Misc.VALUE_MUST_BE_STRINGS };
+                if (!source.guild.channels.has(channelID))
+                    return { success: false, message: Misc.format(Misc.VALUE_CHANNEL_NOEX, channelID) };
+            }
+            extension.getGuildSettings(source.guild).blacklistChannels = value;
+            extension.flushData();
+            return { success: true };
+        }
+    )
 ];
 
 module.exports = LevelExtension;

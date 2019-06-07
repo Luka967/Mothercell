@@ -1,6 +1,6 @@
 {
     "name": "mothercell",
-    "version": "0.3.3",
+    "version": "0.4.0",
     "description": "The Discord bot behind Agar.io private servers",
     "license": "Apache-2.0",
     "author": {
@@ -13,7 +13,7 @@
         "url": "https://github.com/Luka967/Mothercell.git"
     },
     "bugs": {
-        "email": "anusualmail123@gmail.com",
+        "email": "luka.djokovic2@gmail.com",
         "url": "https://github.com/Luka967/Mothercell/issues"
     },
     "dependencies": {
