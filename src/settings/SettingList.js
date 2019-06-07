@@ -5,6 +5,22 @@ class SettingList {
     }
 
     /**
+     * @param {string} incomplete
+     */
+    search(incomplete) {
+        const incompleteKeywords = incomplete.split(".");
+        const results = [];
+        for (let settingName in this.settings) {
+            const matches = settingName.split(".").filter(c => incompleteKeywords.filter(i => c.indexOf(i) !== -1).length > 0).length;
+            if (matches > 0) results.push({
+                settingName: settingName,
+                matches: matches
+            });
+        }
+        return results.sort((a, b) => b.matches - a.matches).map(v => v.settingName);
+    }
+
+    /**
      * @template T
      * @param {string} name
      * @param {Host} host

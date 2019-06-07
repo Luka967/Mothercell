@@ -1,3 +1,17 @@
+0.4.0 @ 2019-06-07
+*: Change bug reporting email for package.json
+*: Keep track of host start
+*: String constant names used for settings are now generic
+basic: New command, status
+level: New settings, levels.enabled
+level: New settings, levels.blacklistroles
+level: New settings, levels.blacklistchannels
+mod: Properly implement ModExtension.canEditSettings
+owner: New command, restart
+owner: New command, stop
+hdata: Make data updates synchronous
+hsettings: Suggest possible setting names if none was found
+
 0.3.3 @ 2019-04-28
 *: Populate package.json
 level: Fomatting update for xpboard
