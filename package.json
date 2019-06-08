@@ -1,6 +1,6 @@
 {
     "name": "mothercell",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "The Discord bot behind Agar.io private servers",
     "license": "Apache-2.0",
     "author": {

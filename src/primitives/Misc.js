@@ -1,7 +1,7 @@
 const DiscordJS = require("discord.js");
 
 module.exports = {
-    version: "0.4.0",
+    version: "0.4.1",
 
     noop() { },
     /**
