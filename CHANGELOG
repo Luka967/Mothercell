@@ -1,3 +1,6 @@
+0.4.2 @ 2019-06-09
+basic: Make the status command's embed show proper count of users
+
 0.4.1 @ 2019-06-09
 owner: Comply with permissions for restart command
 owner: Comply with permissions for stop command

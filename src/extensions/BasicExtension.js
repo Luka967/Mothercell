@@ -77,7 +77,7 @@ const commands = [
             },
             {
                 name: "Users",
-                value: host.clientManager.client.users.size,
+                value: host.clientManager.client.guilds.map(v => v.memberCount).reduce((a, b) => a + b),
                 inline: true
             },
             {
